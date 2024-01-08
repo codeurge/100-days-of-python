@@ -15,29 +15,31 @@ def initialize_game():
   lives = MAX_LIVES
   return chosen_word, display, guessed_letters, lives
 
-"""Returns True if life is lost, False otherwise."""
-def handle_guess(chosen_word, display, guessed_letters):
+def process_guess(chosen_word: str, display: list, guess: str) -> bool:
+  """Update the game state, and returns whether the user's guess was correct."""
+  if guess in chosen_word:
+    for i in range(len(chosen_word)):
+      if chosen_word[i] == guess:
+        display[i] = guess
+    print(f"You guessed {guess}, that's in the word.")
+  else:
+    print(f"You guessed {guess}, that's not in the word. You lose a life.")
+    return False
+  return True
+
+def validate_guess(guessed_letters: set) -> str:
+  """Returns a valid guess from the user."""
   guess = input("Guess a letter: ").lower()
-  clear_screen()
 
   if not guess.isalpha() or len(guess) != 1:
     print("Please enter a single letter.")
   elif guess in guessed_letters:
     print(f"You've already guessed {guess}, guess again.")
-  elif guess in chosen_word:
-    for i in range(len(chosen_word)):
-      if chosen_word[i] == guess:
-        display[i] = guess
-    guessed_letters.add(guess)
-    print(f"You guessed {guess}, that's in the word.")
   else:
-    print(f"You guessed {guess}, that's not in the word. You lose a life.")
-    guessed_letters.add(guess)
-    return True
-  return False
+    return guess
 
-"""Returns True if game is over, False otherwise."""
-def check_game_over(display, lives, chosen_word):
+def check_game_over(chosen_word: str, display: list, lives: int) -> bool:
+  """Returns True if game is over, False otherwise."""
   if "_" not in display:
     print("You win!")
     return True
@@ -53,14 +55,19 @@ def main():
   print(logo)
 
   while True:
-    if handle_guess(chosen_word, display, guessed_letters):
-      lives -= 1
+    guess = validate_guess(guessed_letters)
+    if guess is not None:
+      guessed_letters.add(guess)
+      clear_screen()
 
-    print(stages[lives])
-    print("".join(display))
-    print(f"Guessed Letters: {', '.join(sorted(guessed_letters))}")
+      if not process_guess(chosen_word, display, guess):
+        lives -= 1
 
-    if check_game_over(display, lives, chosen_word):
+      print(stages[lives])
+      print("".join(display))
+      print(f"Guessed Letters: {', '.join(sorted(guessed_letters))}")
+
+    if check_game_over(chosen_word, display, lives):
       break
 
 """Runs if file is run directly, not if imported."""
