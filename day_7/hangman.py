@@ -41,9 +41,9 @@ while not end_of_game:
       print("You lose.")
       print(f"The word was {chosen_word}")
 
-  print(stages[lives])
-  print("".join(display))
-
   if "_" not in display:
     end_of_game = True
     print("You win!")
+
+  print(stages[lives])
+  print("".join(display))
