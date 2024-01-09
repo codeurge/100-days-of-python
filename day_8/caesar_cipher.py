@@ -27,4 +27,7 @@ def main():
   restart = input("Type 'yes' if you want to go again. Otherwise type 'no'.\n")
   if restart == "yes":
     main()
-main()
+
+"""Runs if file is run directly, not if imported."""
+if __name__ == "__main__":
+  main()
